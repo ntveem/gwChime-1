@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+
+# Build artifacts and logs
+gof_*_run.log
+gof_report.aux
+gof_report.log
+gof_report.out
+gof_output_*/
+fig_skewnorm_debug.pdf
+.claude/sdk/logs/
+.claude/.nfs*
