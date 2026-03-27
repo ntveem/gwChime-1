@@ -236,14 +236,15 @@ def _w_lvk_default(df, theta):
     # Injection prior: uniform on [0, chi_max]^2 × [-1,1]^2
     p_prior = 1.0 / (CHI_MAX ** 2) * 0.25
 
-    return p_pop / p_prior
+    out = p_pop / p_prior
+    out = np.where(np.isfinite(out), out, 0.0)
+    return out
 
 
 def _w_truncgauss(df, theta):
     """Truncated Gaussian on χ_eff / Callister prior."""
     mu, sig = theta
     chieff = df['chieff'].values
-    q = df['q'].values
     a = (-1.0 - mu) / sig
     b = (1.0 - mu) / sig
     numerator = truncnorm.pdf(chieff, a, b, loc=mu, scale=sig)
@@ -254,9 +255,6 @@ def _w_truncgauss(df, theta):
     return out
 
 
-def _w_twogauss(df, theta):
-    """Two-Gaussian mixture on χ_eff / Callister prior."""
-    f, sig0, mu_su, sig_su = theta
 def _w_roulet(df, theta):
     """Roulet+ 2021 three-component χ_eff model (Eq. 6 of 2105.10580).
 
@@ -269,7 +267,6 @@ def _w_roulet(df, theta):
     zeta_0 = 1.0 - zeta_pos - zeta_neg
     chieff = df['chieff'].values
     q = df['q'].values
-
     sigma_0 = 0.04  # fixed narrow peak width
 
     # N(x; σ₀) truncated to [-1, 1]
